@@ -1,47 +1,79 @@
+const Article = require('../model/Article'); 
 
-const articles = [
-    {
-        id: 1, 
-        title: 'This is article 1', 
-        body: 'I am Rijwan Hossain'
-    }, 
-    {
-        id: 2, 
-        title: 'Youtube Videos', 
-        body: 'I am creating a youtube course on backend development'
-    }
-]
+const create = async (req, res) => {
+    const { title, body, image, isPublished } = req.body; 
+    try {
+        const article = new Article({title, body, image, isPublished}); 
+        await article.save(); 
 
-const getSingle = (req, res) => {
+        return res.status(201).json({
+            message: 'Article created successfully'
+        }) 
+    } 
+    catch (error) { 
+        console.log('Error occured...');
+    } 
+} 
+
+const getSingle = async (req, res) => {
     const id = req.params.id; 
-    let data; 
-    for(let i = 0; i < articles.length; i++) {
-        if(id == articles[i].id) {
-            data = articles[i]
-            break; 
-        }
+    try {
+        const article = await Article.findById(id); 
+        res.json({
+            article
+        })
+    } 
+    catch (error) {
+        
     }
-
-    res.json({
-        data
-    })
 }
 
-const getAll = (req, res) => {
-    res.json({
-        data: articles
-    })
-}
+const getAll = async (req, res) => {
+    try {
+        const result = await Article.find(); 
+        res.status(200).json({ 
+            total: result.length, 
+            data: result
+        })
+    } 
+    catch (error) {
+        console.log(error)
+    }
+} 
 
-const create = (req, res) => {
-    articles.push(req.body); 
-    res.json({
-        message: 'Article created successfully'
-    })
-}
+const update = async (req, res) => { 
+    const { title } = req.body; 
+    const { id } = req.params; 
+    try {
+        const article = await Article.findByIdAndUpdate(id, {$set: {title}}, {new: true}); 
+        res.status(200).json({ 
+            message: 'Updated Successfully', 
+            article 
+        }) 
+    } 
+    catch (error) {
+        console.log(error)
+    }
+} 
+
+
+const deleteArticle = async (req, res) => { 
+    const { id } = req.params; 
+    try {
+        await Article.findByIdAndDelete(id); 
+        res.status(200).json({ 
+            message: 'Deleted Successfully'
+        }) 
+    } 
+    catch (error) {
+        console.log(error)
+    }
+} 
 
 module.exports = {
     create, 
     getAll, 
-    getSingle
+    getSingle, 
+    update, 
+    deleteArticle
 }

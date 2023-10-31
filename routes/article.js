@@ -2,16 +2,18 @@ const express = require('express');
 const { 
     create, 
     getAll, 
-    getSingle 
+    getSingle, 
+    update, 
+    deleteArticle
 } = require('../controller/articleController')
 const route = express.Router(); 
 
 
-route.get('/', getAll)
-
-route.get('/:id', getSingle)
-
-route.post('/', create)
+route.post('/', create);
+route.get('/', getAll);
+route.get('/:id', getSingle);
+route.patch('/:id', update);
+route.delete('/:id', deleteArticle);
 
 // route.patch('/article/:id', (req, res) => {
 //     ...
